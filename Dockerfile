@@ -116,4 +116,7 @@ RUN flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/r
     rm -rf /var/tmp/* /tmp/*
 
 COPY root/ /
-RUN update-desktop-database /usr/share/applications
+# Build steps run with HOME=/config (LinuxServer default) and leave root-owned files there,
+# which a fresh Docker volume would copy into the user's home.
+RUN update-desktop-database /usr/share/applications && \
+    rm -rf /config/.cache /config/.local /config/.config
