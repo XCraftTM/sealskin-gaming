@@ -12,16 +12,27 @@ if ! HOME=/config s6-setuidgid abc bwrap --ro-bind / / --proc /proc --dev /dev -
     echo "**** gaming-setup: Flatpak sandbox unavailable; see the README for the required Docker options ****"
 fi
 
-# Keyboard layout (e.g. KEYBOARD_LAYOUT=de). Selkies ignores the browser's layout hint in this
-# Wayland session ("the session compositor owns the keymap"), and both Selkies and KWin
-# default to US English. Then keys that need Shift there (like + on a German keyboard) reach
-# X11 games such as Minecraft as Shift plus a substitute key. Set it for both:
+# Keyboard layout. Selkies ignores the browser's layout hint in this Wayland session ("the
+# session compositor owns the keymap"), and KWin keeps its own layout in ~/.config/kxkbrc. If
+# the two differ, keys come out wrong (e.g. Y and Z swapped, or + reaching X11 games such as
+# Minecraft as Shift plus a substitute key). So both must use the same layout:
+# - KEYBOARD_LAYOUT (e.g. de), if set, is written to KDE's settings;
+# - otherwise KDE's own setting (System Settings > Keyboard, saved in the home) is used.
+# Selkies then gets the same layout and variant. KDE changes apply from the next session.
+KXKBRC=/config/.config/kxkbrc
 if [ -n "${KEYBOARD_LAYOUT}" ]; then
-    # Selkies' keymap (read from the container environment by the s6 services)
-    printf '%s' "${KEYBOARD_LAYOUT}" > /run/s6/container_environment/XKB_DEFAULT_LAYOUT
-    # KWin's keymap, which XWayland (and so Minecraft) uses
-    HOME=/config s6-setuidgid abc kwriteconfig6 --file /config/.config/kxkbrc --group Layout --key LayoutList "${KEYBOARD_LAYOUT}"
-    HOME=/config s6-setuidgid abc kwriteconfig6 --file /config/.config/kxkbrc --group Layout --key Use true
+    HOME=/config s6-setuidgid abc kwriteconfig6 --file "${KXKBRC}" --group Layout --key LayoutList "${KEYBOARD_LAYOUT}"
+    HOME=/config s6-setuidgid abc kwriteconfig6 --file "${KXKBRC}" --group Layout --key Use true
+fi
+if [ -f "${KXKBRC}" ]; then
+    layout=$(kreadconfig6 --file "${KXKBRC}" --group Layout --key LayoutList | cut -d, -f1)
+    variant=$(kreadconfig6 --file "${KXKBRC}" --group Layout --key VariantList | cut -d, -f1)
+    if [ -n "${layout}" ]; then
+        # Read by the s6 services (Selkies) from the container environment
+        printf '%s' "${layout}" > /run/s6/container_environment/XKB_DEFAULT_LAYOUT
+        printf '%s' "${variant}" > /run/s6/container_environment/XKB_DEFAULT_VARIANT
+        echo "**** gaming-setup: keyboard layout ${layout}${variant:+ (${variant})} ****"
+    fi
 fi
 
 # Stale browser profile locks. Chromium-based browsers (Brave, Chrome, Vivaldi, Edge, ...) and

@@ -66,10 +66,15 @@ document portal still won't run (no `/dev/fuse`).
 
 ## Keyboard layout
 
-Set `KEYBOARD_LAYOUT` to your physical layout (XKB name: `de`, `us`, `fr`, `ch`, …); the store
-entry sets `de`. Selkies ignores the browser's layout hint in this Wayland session, so without it
-both Selkies and KDE use US English. Keys that need Shift there (like `+` on a German keyboard)
-then reach X11 games such as Minecraft as Shift plus a substitute key, so they bind as "Left Shift".
+Selkies ignores the browser's layout hint in this Wayland session, and KDE keeps its own layout.
+Both must match your physical keyboard, or keys come out wrong (Y and Z swapped, or keys like `+`
+on a German keyboard reaching X11 games such as Minecraft as Shift plus a substitute key).
+
+Set the layout in **KDE's System Settings → Keyboard**: on every session start the image hands the
+same layout (and variant) to Selkies, so changes apply from the next session. Alternatively set
+`KEYBOARD_LAYOUT` (XKB name: `de`, `us`, `fr`, `ch`, …) in the store entry or an app template; it
+then overrides KDE's setting. SealSkin keeps an app's definition from when it was installed, so
+re-add the app after store changes.
 
 Known Selkies limitations (not fixable in this image):
 
