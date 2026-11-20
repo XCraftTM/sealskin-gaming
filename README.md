@@ -35,25 +35,27 @@ home folder, or use `proot-apps`.
    `https://raw.githubusercontent.com/XCraftTM/sealskin-gaming/main/store/apps.yml`
 2. Launch **Gaming Desktop (KDE)**, pick the AMD GPU, and use a persistent home.
 
-### Permissions
+### Permissions (admin step)
 
 Flatpak's sandbox (bubblewrap) can't run in a default container on Ubuntu 24.04+ hosts, where
-AppArmor blocks unprivileged user namespaces. The image ships a setuid `bwrap`, and the app entry
-runs the container **privileged**:
+AppArmor blocks unprivileged user namespaces. The image ships a setuid `bwrap`, which works when the
+container runs **privileged**. SealSkin ignores `privileged` in store entries (only an admin may
+grant it), so set it yourself in the SealSkin admin UI:
 
-```yaml
-docker_overrides:
-  privileged: true
-  shm_size: "1g"
-```
+- an **app template** with `DOCKER_PRIVILEGED` = `true`, used for this app, or
+- an **admin override** `privileged: true` on the installed app.
+
+Without it, Flatpak apps (Bottles, Discover installs) quit right after starting, and Flatpak warns
+"Can't get document portal" (no `/dev/fuse`). Check a session with `ls /dev/fuse`.
 
 Combined with the webtop's passwordless `sudo`, a privileged container means **whoever uses this
 desktop can get root on the SealSkin host**. Only give this app to users you trust.
 
 **Narrower alternative** (not tested): allow unprivileged user namespaces on the host with
 `sysctl kernel.apparmor_restrict_unprivileged_userns=0` (persist it in `/etc/sysctl.d/`), and use
-only `security_opt: ["seccomp=unconfined", "apparmor=unconfined"]` instead of `privileged`.
-That loosens a host-wide hardening setting instead.
+only `security_opt: ["seccomp=unconfined", "apparmor=unconfined"]` (allowed in store entries)
+instead of `privileged`. That loosens a host-wide hardening setting instead, and Flatpak's
+document portal still won't run (no `/dev/fuse`).
 
 ### What else the image fixes
 
