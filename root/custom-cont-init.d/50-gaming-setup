@@ -11,3 +11,15 @@ HOME=/config s6-setuidgid abc \
 if ! HOME=/config s6-setuidgid abc bwrap --ro-bind / / --proc /proc --dev /dev --unshare-all --share-net /bin/true 2>/dev/null; then
     echo "**** gaming-setup: Flatpak sandbox unavailable; see the README for the required Docker options ****"
 fi
+
+# Keyboard layout (e.g. KEYBOARD_LAYOUT=de). Selkies ignores the browser's layout hint in this
+# Wayland session ("the session compositor owns the keymap"), and both Selkies and KWin
+# default to US English. Then keys that need Shift there (like + on a German keyboard) reach
+# X11 games such as Minecraft as Shift plus a substitute key. Set it for both:
+if [ -n "${KEYBOARD_LAYOUT}" ]; then
+    # Selkies' keymap (read from the container environment by the s6 services)
+    printf '%s' "${KEYBOARD_LAYOUT}" > /run/s6/container_environment/XKB_DEFAULT_LAYOUT
+    # KWin's keymap, which XWayland (and so Minecraft) uses
+    HOME=/config s6-setuidgid abc kwriteconfig6 --file /config/.config/kxkbrc --group Layout --key LayoutList "${KEYBOARD_LAYOUT}"
+    HOME=/config s6-setuidgid abc kwriteconfig6 --file /config/.config/kxkbrc --group Layout --key Use true
+fi

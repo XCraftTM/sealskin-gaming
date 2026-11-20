@@ -54,6 +54,20 @@ That loosens a host-wide hardening setting instead.
 - Discover is **Flatpak only** (its apt backend is disabled): apt installs never survived a session.
 - `gamemoderun` is provided (Ubuntu only ships the daemon): use `gamemoderun %command%` in Steam.
 
+## Keyboard layout
+
+Set `KEYBOARD_LAYOUT` to your physical layout (XKB name: `de`, `us`, `fr`, `ch`, …); the store
+entry sets `de`. Selkies ignores the browser's layout hint in this Wayland session, so without it
+both Selkies and KDE use US English. Keys that need Shift there (like `+` on a German keyboard)
+then reach X11 games such as Minecraft as Shift plus a substitute key, so they bind as "Left Shift".
+
+Known Selkies limitations (not fixable in this image):
+
+- Non-ASCII keys (ä, ö, ü, ß, …) still reach X11 games as Shift + a substitute key, even with the
+  right layout. Typing them in text fields works.
+- Keypad keys arrive as their main-keyboard equivalents (keypad `+` as `+`), because the web client
+  sends characters rather than key positions.
+
 ## Build
 
 GitHub Actions builds `ghcr.io/xcrafttm/sealskin-gaming:latest` on every push and weekly.

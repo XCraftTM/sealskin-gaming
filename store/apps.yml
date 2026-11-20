@@ -23,3 +23,6 @@ apps:
       docker_overrides:
         privileged: true
         shm_size: "1g"
+        environment:
+          # Your physical keyboard layout (XKB name: de, us, fr, ch, gb, ...)
+          KEYBOARD_LAYOUT: "de"
