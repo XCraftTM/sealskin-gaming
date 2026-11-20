@@ -7,12 +7,20 @@ inside a container.
 ## What's included
 
 - **Steam** (native, with 32-bit libraries and Proton support), already installed: no reinstall per session
-- **Wine 10**, **Winetricks**, **Protontricks**: double-click a `.exe` / `.msi` to run it with Wine
+- **Wine** stable from WineHQ, **Winetricks**, **Protontricks**: double-click a `.exe` / `.msi` to run it with Wine
 - **Bottles** (Flatpak) for programs that need their own Wine prefix ("Open With" → Bottles)
-- **Prism Launcher** for Minecraft (downloads the right Java itself)
+- **Prism Launcher** for Minecraft (official AppImage; downloads the right Java itself)
 - **GameMode** (`gamemoderun`), **MangoHud**, **vkBasalt**, **Gamescope**, `vulkaninfo`
 - **Discover + Flathub**: apps install into your home folder, so they stay installed
-- 64- and 32-bit Mesa (RADV Vulkan for AMD GPUs)
+- Newer 64- and 32-bit Mesa from the kisak-mesa PPA (RADV Vulkan for AMD GPUs)
+
+### Staying up to date
+
+Ubuntu freezes package versions per release, so the gaming tools come from their upstream
+sources: Wine from WineHQ, Mesa from kisak-mesa, Prism Launcher, Winetricks and MangoHud from their
+GitHub releases, Protontricks from PyPI, Bottles from Flathub. The weekly CI build (no cache)
+picks up new stable releases automatically. Steam updates itself; Flatpaks you installed update
+through Discover. Gamescope, GameMode and vkBasalt come from Ubuntu.
 
 ## Why things used to disappear
 
