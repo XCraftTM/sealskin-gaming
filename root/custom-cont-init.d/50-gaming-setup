@@ -23,3 +23,16 @@ if [ -n "${KEYBOARD_LAYOUT}" ]; then
     HOME=/config s6-setuidgid abc kwriteconfig6 --file /config/.config/kxkbrc --group Layout --key LayoutList "${KEYBOARD_LAYOUT}"
     HOME=/config s6-setuidgid abc kwriteconfig6 --file /config/.config/kxkbrc --group Layout --key Use true
 fi
+
+# Stale browser profile locks. Chromium-based browsers (Brave, Chrome, Vivaldi, Edge, ...) and
+# Firefox lock their profile with a symlink naming the host and process. Every session is a new
+# container with a new hostname, so a lock left by a session that ended with the browser open
+# makes the browser refuse to start ("profile in use on another computer"). No browser runs yet
+# at this point, so any lock found is stale. Only the lock symlinks are removed.
+for dir in /config/.config /config/.var/app /config/.mozilla; do
+    [ -d "${dir}" ] || continue
+    find "${dir}" -maxdepth 7 -type l \
+        \( -name SingletonLock -o -name SingletonCookie -o -name SingletonSocket \
+           -o \( -name lock -path '*mozilla*' \) \) \
+        -print -delete 2>/dev/null | sed 's/^/**** gaming-setup: removed stale browser lock /'
+done
