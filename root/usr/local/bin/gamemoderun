@@ -1,0 +1,6 @@
+#!/bin/sh
+# Ubuntu doesn't ship gamemoderun; this is what upstream's does: preload the client library
+# that asks gamemoded to optimise the system while the program runs.
+# Usage, e.g. in Steam launch options: gamemoderun %command%
+export LD_PRELOAD="libgamemodeauto.so.0${LD_PRELOAD:+:$LD_PRELOAD}"
+exec "$@"

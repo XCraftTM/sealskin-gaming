@@ -1,0 +1,13 @@
+#!/usr/bin/with-contenv bash
+# Runs as root on every container start (SealSkin starts a fresh container per session).
+
+# Flathub for the user installation, which lives in the persistent home: Discover and
+# `flatpak install` put apps there, so they are still installed in the next session.
+HOME=/config s6-setuidgid abc \
+    flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo \
+    || echo "**** gaming-setup: could not add the user Flathub remote ****"
+
+# Tell the user once if the Flatpak sandbox can't run (missing permissions in the app entry).
+if ! HOME=/config s6-setuidgid abc bwrap --ro-bind / / --proc /proc --dev /dev --unshare-all --share-net /bin/true 2>/dev/null; then
+    echo "**** gaming-setup: Flatpak sandbox unavailable; see the README for the required Docker options ****"
+fi

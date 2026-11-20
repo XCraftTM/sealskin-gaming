@@ -1,0 +1,25 @@
+# SealSkin app store: add the raw URL of this file as a store in the SealSkin admin UI.
+apps:
+  - id: "gaming-desktop"
+    name: "Gaming Desktop (KDE)"
+    logo: "https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/webtop-logo.png"
+    url: "https://github.com/XCraftTM/sealskin-gaming"
+    provider: "docker"
+    provider_config:
+      image: "ghcr.io/xcrafttm/sealskin-gaming:latest"
+      port: 3000
+      nvidia_support: false
+      dri3_support: true
+      type: "desktop"
+      autostart: false
+      url_support: false
+      open_support: true
+      extensions: [exe, msi]
+      # Needed for the Flatpak sandbox (Bottles, Discover installs) on Ubuntu 24.04+ hosts,
+      # where AppArmor blocks unprivileged user namespaces even for unconfined containers.
+      # The image ships a setuid bwrap, which works in a privileged container. (A narrower set,
+      # caps + systempaths=unconfined, can't be passed through SealSkin's Docker API calls.)
+      # Alternative: see the README (host sysctl + seccomp/apparmor unconfined only).
+      docker_overrides:
+        privileged: true
+        shm_size: "1g"

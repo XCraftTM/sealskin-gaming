@@ -1,0 +1,7 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+# A system D-Bus, which webtop doesn't run: Flatpak checks parental controls over it before
+# every install (so Discover and `flatpak install --user` fail without it).
+mkdir -p /run/dbus
+rm -f /run/dbus/pid
+exec dbus-daemon --system --nofork --nopidfile

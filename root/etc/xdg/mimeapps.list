@@ -1,0 +1,14 @@
+[Default Applications]
+# Double-click Windows programs and installers to run them with Wine (like Zorin OS).
+# Bottles is offered under "Open With" for programs that need their own prefix.
+application/x-ms-dos-executable=wine.desktop;
+application/vnd.microsoft.portable-executable=wine.desktop;
+application/x-msdownload=wine.desktop;
+application/x-msi=wine.desktop;
+application/x-ms-shortcut=wine.desktop;
+
+[Added Associations]
+application/x-ms-dos-executable=wine.desktop;com.usebottles.bottles.desktop;
+application/vnd.microsoft.portable-executable=wine.desktop;com.usebottles.bottles.desktop;
+application/x-msdownload=wine.desktop;com.usebottles.bottles.desktop;
+application/x-msi=wine.desktop;com.usebottles.bottles.desktop;
